@@ -2,6 +2,8 @@ import logging
 import os
 import random
 import sys
+import requests
+from bs4 import BeautifulSoup
 
 from telegram.ext import Updater, CommandHandler
 
@@ -38,7 +40,11 @@ def random_handler(bot, update):
     number = random.randint(0, 10)
     logger.info("User {} randomed number {}".format(
         update.effective_user["id"], number))
-    update.message.reply_text("Random number: {}".format(number))
+    url = 'https://afisha.yandex.ru/moscow/cinema/jumanji-2?source=selection-events&schedule-preset=today'
+    r = requests.get(url)
+    html = BeautifulSoup(r.text, 'html.parser')
+    update.message.reply_text("Фильм: {}".format(html.find(
+        "div", {"class": "event-concert-description__title-info"}).text))
 
 
 if __name__ == '__main__':
