@@ -93,14 +93,15 @@ def hockey_handler(bot, update):
             message += "\r\n{}. Начало: {}".format(
                 match.get("title"), match.get("time"))
         message += "\r\n\r\n"
-    print(message)
     if len(message) > 4096:
         for x in range(0, len(message), 4096):
             bot.send_message(chat_id=update.message.chat_id,
                              text=message[x:x+4096],
                              parse_mode=telegram.ParseMode.MARKDOWN)
         else:
-            update.message.reply_text(message)
+            bot.send_message(chat_id=update.message.chat_id,
+                             text=message,
+                             parse_mode=telegram.ParseMode.MARKDOWN)
 
 
 def basketball_handler(bot, update):
@@ -133,7 +134,9 @@ def basketball_handler(bot, update):
                              text=message[x:x+4096],
                              parse_mode=telegram.ParseMode.MARKDOWN)
         else:
-            update.message.reply_text(message)
+            bot.send_message(chat_id=update.message.chat_id,
+                             text=message,
+                             parse_mode=telegram.ParseMode.MARKDOWN)
 
 
 if __name__ == '__main__':
