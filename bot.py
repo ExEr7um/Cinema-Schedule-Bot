@@ -135,8 +135,7 @@ def basketball_handler(bot, update):
                              parse_mode=telegram.ParseMode.MARKDOWN)
     else:
         bot.send_message(chat_id=update.message.chat_id,
-                         text=message,
-                         parse_mode=telegram.ParseMode.MARKDOWN)
+                         text=message, parse_mode=telegram.ParseMode.MARKDOWN)
 
 
 if __name__ == '__main__':
