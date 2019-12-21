@@ -43,9 +43,7 @@ def today_handler(bot, update):
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
     r = requests.get(url, headers=headers)
     html = BeautifulSoup(r.text, 'html.parser')
-    [s.extract() for s in html('script')]
-    html = html.find("noscript")
-    print(html)
+    # [s.extract() for s in html('script')]
     tournaments = html.findAll("div", {"class": "seo-results__tournament"})
     matches = html.find("div", {"class": "seo-results"}).findAll("ul")
     events = []
