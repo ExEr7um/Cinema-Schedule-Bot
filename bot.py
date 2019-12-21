@@ -66,7 +66,7 @@ def today_handler(bot, update):
     #             match.get("title"), match.get("time"))
     #     message += "\r\n\r\n"
     # print(message)
-    update.message.reply_text(html)
+    update.message.reply_text(html.extract)
 
 
 if __name__ == '__main__':
