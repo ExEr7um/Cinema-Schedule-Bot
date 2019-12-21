@@ -3,7 +3,7 @@ import os
 import sys
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timedelta
 
 from telegram.ext import Updater, CommandHandler
 
@@ -55,7 +55,34 @@ def today_handler(bot, update):
                        "matches": tournament_matches})
     message = ""
     for event in events:
-        message += "*" + event.get("title") + "*"
+        message += "<b>" + event.get("title") + "</b>"
+        for match in event.get("matches"):
+            message += "\r\n{}. Начало: {}".format(
+                match.get("title"), match.get("time"))
+        message += "\r\n\r\n"
+    update.message.reply_text(message[:4096])
+
+
+def tomorrow_handler(bot, update):
+    tomorrow = str(datetime.today() + timedelta(days=1)).split()[0]
+    url = 'https://www.championat.com/stat/football/#' + tomorrow
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+    r = requests.get(url, headers=headers)
+    html = BeautifulSoup(r.text, 'html.parser')
+    tournaments = html.findAll("div", {"class": "seo-results__tournament"})
+    matches = html.find("div", {"class": "seo-results"}).findAll("ul")
+    events = []
+    for index, tournament in enumerate(tournaments):
+        tournament_matches = []
+        for match in matches[index].findAll("li"):
+            tournament_matches.append({"title": match.a.text, "time": match.find(
+                "span", {"class": "seo-results__item-date"}).text})
+        events.append({"title": tournament.a.text,
+                       "matches": tournament_matches})
+    message = ""
+    for event in events:
+        message += "<b>" + event.get("title") + "</b>"
         for match in event.get("matches"):
             message += "\r\n{}. Начало: {}".format(
                 match.get("title"), match.get("time"))
@@ -69,5 +96,7 @@ if __name__ == '__main__':
 
     updater.dispatcher.add_handler(CommandHandler("start", start_handler))
     updater.dispatcher.add_handler(CommandHandler("today", today_handler))
+    updater.dispatcher.add_handler(
+        CommandHandler("tomorrow", tomorrow_handler))
 
     run(updater)
