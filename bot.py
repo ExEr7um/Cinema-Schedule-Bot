@@ -11,8 +11,8 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger()
 
-mode = os.getenv("MODE")
-TOKEN = os.getenv("TOKEN")
+mode = "dev"
+TOKEN = "910844369:AAFt-D_rfNew_MmQedHYIQ1eIYkF8V2YUjE"
 if mode == "dev":
     def run(updater):
         updater.start_polling()
@@ -44,29 +44,30 @@ def today_handler(bot, update):
     r = requests.get(url, headers=headers)
     html = BeautifulSoup(r.text, 'html.parser')
     [s.extract() for s in html('script')]
-    # tournaments = html.findAll("div", {"class": "seo-results__tournament"})
-    # print(tournaments)
-    # matches = html.find("div", {"class": "seo-results"}).findAll("ul")
-    # print(matches)
-    # events = []
-    # for index, tournament in enumerate(tournaments):
-    #     tournament_matches = []
-    #     for match in matches[index].findAll("li"):
-    #         tournament_matches.append({"title": match.a.text, "time": match.find(
-    #             "span", {"class": "seo-results__item-date"}).text})
-    #     events.append({"title": tournament.a.text,
-    #                    "matches": tournament_matches})
-    # print(events)
-    # message = ""
-    # for event in events:
-    #     print(event)
-    #     message += event.get("title")
-    #     for match in event.get("matches"):
-    #         message += "\r\n{}. Начало: {}".format(
-    #             match.get("title"), match.get("time"))
-    #     message += "\r\n\r\n"
-    # print(message)
-    update.message.reply_text(html.extract)
+    print(html.find("noscript"))
+    tournaments = html.findAll("div", {"class": "seo-results__tournament"})
+    print(tournaments)
+    matches = html.find("div", {"class": "seo-results"}).findAll("ul")
+    print(matches)
+    events = []
+    for index, tournament in enumerate(tournaments):
+        tournament_matches = []
+        for match in matches[index].findAll("li"):
+            tournament_matches.append({"title": match.a.text, "time": match.find(
+                "span", {"class": "seo-results__item-date"}).text})
+        events.append({"title": tournament.a.text,
+                       "matches": tournament_matches})
+    print(events)
+    message = ""
+    for event in events:
+        print(event)
+        message += event.get("title")
+        for match in event.get("matches"):
+            message += "\r\n{}. Начало: {}".format(
+                match.get("title"), match.get("time"))
+        message += "\r\n\r\n"
+    print(message)
+    update.message.reply_text(message)
 
 
 if __name__ == '__main__':
