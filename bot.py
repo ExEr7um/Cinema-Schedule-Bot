@@ -2,9 +2,9 @@ import logging
 import os
 import sys
 import requests
+import telegram
 from bs4 import BeautifulSoup
 from datetime import datetime, date, time
-
 from telegram.ext import Updater, CommandHandler
 
 logging.basicConfig(level=logging.INFO,
