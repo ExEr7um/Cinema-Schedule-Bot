@@ -1,9 +1,9 @@
 import logging
 import os
-import random
 import sys
 import requests
 from bs4 import BeautifulSoup
+from datetime import datetime, date, time
 
 from telegram.ext import Updater, CommandHandler
 
@@ -36,15 +36,32 @@ def start_handler(bot, update):
         "Hello from Python!\nPress /random to get random number")
 
 
-def random_handler(bot, update):
-    number = random.randint(0, 10)
-    logger.info("User {} randomed number {}".format(
-        update.effective_user["id"], number))
-    url = 'https://afisha.yandex.ru/moscow/cinema/jumanji-2?source=selection-events&schedule-preset=today'
-    r = requests.get(url)
+def today_handler(bot, update):
+    today = str(datetime.today()).split()[0]
+    url = 'https://www.championat.com/stat/football/#' + today
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+    r = requests.get(url, headers=headers)
     html = BeautifulSoup(r.text, 'html.parser')
-    update.message.reply_text("Фильм: {}".format(html.find(
-        "div", {"class": "event-concert-description__title-info"}).text))
+    [s.extract() for s in html('script')]
+    tournaments = html.findAll("div", {"class": "seo-results__tournament"})
+    matches = html.find("div", {"class": "seo-results"}).findAll("ul")
+    events = []
+    for index, tournament in enumerate(tournaments):
+        tournament_matches = []
+        for match in matches[index].findAll("li"):
+            tournament_matches.append({"title": match.a.text, "time": match.find(
+                "span", {"class": "seo-results__item-date"}).text})
+        events.append({"title": tournament.a.text,
+                       "matches": tournament_matches})
+    message = ""
+    for event in events:
+        message += event.get("title")
+        for match in event.get("matches"):
+            message += "\r\n{}. Начало: {}".format(
+                match.get("title"), match.get("time"))
+        message += "\r\n\r\n"
+    update.message.reply_text(message)
 
 
 if __name__ == '__main__':
@@ -52,6 +69,6 @@ if __name__ == '__main__':
     updater = Updater(TOKEN)
 
     updater.dispatcher.add_handler(CommandHandler("start", start_handler))
-    updater.dispatcher.add_handler(CommandHandler("random", random_handler))
+    updater.dispatcher.add_handler(CommandHandler("today", today_handler))
 
     run(updater)
