@@ -38,6 +38,7 @@ def start_handler(bot, update):
 
 def today_handler(bot, update):
     today = str(datetime.today()).split()[0]
+    print(today)
     url = 'https://www.championat.com/stat/football/#' + today
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
