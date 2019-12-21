@@ -45,6 +45,7 @@ def today_handler(bot, update):
     html = BeautifulSoup(r.text, 'html.parser')
     [s.extract() for s in html('script')]
     tournaments = html.findAll("div", {"class": "seo-results__tournament"})
+    print(tournaments)
     print(html.find("div", {"class": "seo-results"}))
     matches = html.find("div", {"class": "seo-results"}).findAll("ul")
     events = []
