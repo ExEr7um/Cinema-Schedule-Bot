@@ -44,10 +44,8 @@ def today_handler(bot, update):
     r = requests.get(url, headers=headers)
     html = BeautifulSoup(r.text, 'html.parser')
     [s.extract() for s in html('script')]
-    html = html.find("div", {"class": "page-content"})
+    print(html.text)
     tournaments = html.findAll("div", {"class": "seo-results__tournament"})
-    print(tournaments)
-    print(html.find("div", {"class": "seo-results"}))
     matches = html.find("div", {"class": "seo-results"}).findAll("ul")
     events = []
     for index, tournament in enumerate(tournaments):
