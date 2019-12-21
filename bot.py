@@ -62,7 +62,8 @@ def football_handler(bot, update):
         message += "\r\n\r\n"
     if len(message) > 4096:
         for x in range(0, len(message), 4096):
-            update.message.reply_text(message[x:x+4096])
+            bot.send_message(chat_id=update.message.chat_id,
+                             text=message[x:x+4096])
         else:
             update.message.reply_text(message)
 
