@@ -61,7 +61,7 @@ def today_handler(bot, update):
     message = ""
     for event in events:
         print(event)
-        message += event.get("title")
+        message += "**" + event.get("title") + "**"
         for match in event.get("matches"):
             message += "\r\n{}. Начало: {}".format(
                 match.get("title"), match.get("time"))
