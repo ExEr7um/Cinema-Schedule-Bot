@@ -65,8 +65,9 @@ def football_handler(bot, update):
             bot.send_message(chat_id=update.message.chat_id,
                              text=message[x:x+4096],
                              parse_mode=telegram.ParseMode.MARKDOWN)
-        else:
-            update.message.reply_text(message)
+    else:
+        bot.send_message(chat_id=update.message.chat_id,
+                         text=message, parse_mode=telegram.ParseMode.MARKDOWN)
 
 
 def hockey_handler(bot, update):
@@ -98,10 +99,9 @@ def hockey_handler(bot, update):
             bot.send_message(chat_id=update.message.chat_id,
                              text=message[x:x+4096],
                              parse_mode=telegram.ParseMode.MARKDOWN)
-        else:
-            bot.send_message(chat_id=update.message.chat_id,
-                             text=message,
-                             parse_mode=telegram.ParseMode.MARKDOWN)
+    else:
+        bot.send_message(chat_id=update.message.chat_id,
+                         text=message, parse_mode=telegram.ParseMode.MARKDOWN)
 
 
 def basketball_handler(bot, update):
@@ -133,10 +133,10 @@ def basketball_handler(bot, update):
             bot.send_message(chat_id=update.message.chat_id,
                              text=message[x:x+4096],
                              parse_mode=telegram.ParseMode.MARKDOWN)
-        else:
-            bot.send_message(chat_id=update.message.chat_id,
-                             text=message,
-                             parse_mode=telegram.ParseMode.MARKDOWN)
+    else:
+        bot.send_message(chat_id=update.message.chat_id,
+                         text=message,
+                         parse_mode=telegram.ParseMode.MARKDOWN)
 
 
 if __name__ == '__main__':
