@@ -11,8 +11,8 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger()
 
-mode = "dev"
-TOKEN = "910844369:AAFt-D_rfNew_MmQedHYIQ1eIYkF8V2YUjE"
+mode = os.getenv("MODE")
+TOKEN = os.getenv("TOKEN")
 if mode == "dev":
     def run(updater):
         updater.start_polling()
@@ -33,10 +33,10 @@ else:
 def start_handler(bot, update):
     logger.info("User {} started bot".format(update.effective_user["id"]))
     update.message.reply_text(
-        "Hello from Python!\nPress /random to get random number")
+        "Привет, {}!\r\nЯ умею показывать расписание спортивных событий".format(update.message.from_user.first_name))
 
 
-def today_handler(bot, update):
+def football_handler(bot, update):
     today = str(datetime.today()).split()[0]
     url = 'https://www.championat.com/stat/football/#' + today
     headers = {
@@ -55,39 +55,16 @@ def today_handler(bot, update):
                        "matches": tournament_matches})
     message = ""
     for event in events:
-        message += "<b>" + event.get("title") + "</b>"
+        message += event.get("title")
         for match in event.get("matches"):
             message += "\r\n{}. Начало: {}".format(
                 match.get("title"), match.get("time"))
         message += "\r\n\r\n"
-    update.message.reply_text(message[:4096])
-
-
-def tomorrow_handler(bot, update):
-    tomorrow = str(datetime.today() + timedelta(days=1)).split()[0]
-    url = 'https://www.championat.com/stat/football/#' + tomorrow
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
-    r = requests.get(url, headers=headers)
-    html = BeautifulSoup(r.text, 'html.parser')
-    tournaments = html.findAll("div", {"class": "seo-results__tournament"})
-    matches = html.find("div", {"class": "seo-results"}).findAll("ul")
-    events = []
-    for index, tournament in enumerate(tournaments):
-        tournament_matches = []
-        for match in matches[index].findAll("li"):
-            tournament_matches.append({"title": match.a.text, "time": match.find(
-                "span", {"class": "seo-results__item-date"}).text})
-        events.append({"title": tournament.a.text,
-                       "matches": tournament_matches})
-    message = ""
-    for event in events:
-        message += "<b>" + event.get("title") + "</b>"
-        for match in event.get("matches"):
-            message += "\r\n{}. Начало: {}".format(
-                match.get("title"), match.get("time"))
-        message += "\r\n\r\n"
-    update.message.reply_text(message[:4096])
+    if len(message) > 4096:
+        for x in range(0, len(message), 4096):
+            update.message.reply_text(message[x:x+4096])
+        else:
+            update.message.reply_text(message)
 
 
 if __name__ == '__main__':
@@ -95,8 +72,6 @@ if __name__ == '__main__':
     updater = Updater(TOKEN)
 
     updater.dispatcher.add_handler(CommandHandler("start", start_handler))
-    updater.dispatcher.add_handler(CommandHandler("today", today_handler))
-    updater.dispatcher.add_handler(
-        CommandHandler("tomorrow", tomorrow_handler))
+    updater.dispatcher.add_handler(CommandHandler("today", football_handler))
 
     run(updater)
