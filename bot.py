@@ -148,6 +148,6 @@ if __name__ == '__main__':
     updater.dispatcher.add_handler(
         CommandHandler("hockey", hockey_handler))
     updater.dispatcher.add_handler(
-        CommandHandler("backetball", basketball_handler))
+        CommandHandler("basketball", basketball_handler))
 
     run(updater)
